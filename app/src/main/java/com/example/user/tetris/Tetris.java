@@ -60,8 +60,8 @@ public class Tetris extends AppCompatActivity {
 
         int[][] block = blocks[mRand.nextInt(blocks.length)];
         int posx, posy;
-        int mapWidth  = 10;
-        int mapHeight = 20;
+        int mapWidth  = 10 * 2 + 4;
+        int mapHeight = 15 * 2 + 4;
         int[][] map = new int[mapHeight][];
 
         public FieldView(Context context) {
@@ -91,9 +91,9 @@ public class Tetris extends AppCompatActivity {
             for (int y = 0; y < h; y ++) {
                 for (int x = 0; x < w; x ++) {
                     if (matrix[y][x] != 0) {
-                        int px = (x + offsetx) * 20;
-                        int py = (y + offsety) * 20;
-                        rect.setBounds(px, py, px + 20, py + 20);
+                        int px = (x + offsetx) * 45;
+                        int py = (y + offsety) * 45;
+                        rect.setBounds(px, py, px + 40, py + 40);
                         rect.draw(canvas);
                     }
                 }
