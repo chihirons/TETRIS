@@ -12,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.SurfaceView;
+import android.view.View;
 
 import java.util.Random;
 
@@ -71,6 +72,44 @@ public class Tetris extends AppCompatActivity {
             setFocusable(true);
             setFocusableInTouchMode(true);
             requestFocus();
+
+            // activity画面のタッチ操作を取得
+            View frick = getWindow().getDecorView();
+
+            new Flick(frick){
+
+                @Override
+                public void getFlick(int swipe) {
+                    switch (swipe){
+                        case Flick.LEFT_FLICK:
+                            if (check(block, posx - 1, posy)) {
+                                posx = posx - 1;
+                            }
+                            break;
+
+                        case Flick.RIGHT_FLICK:
+                            if (check(block, posx + 1, posy)) {
+                                posx = posx + 1;
+                            }
+                            break;
+
+                        case Flick.Tap:
+                            int[][] newBlock = rotate(block);
+                            if (check(newBlock, posx, posy)) {
+                                block = newBlock;
+                            }
+                            break;
+
+                        case Flick.DOWN_FLICK:
+                            int y = posy;
+                            while (check(block, posx, y)) {
+                                y++;
+                            }
+                            if (y > 0) posy = y - 1;
+                            break;
+                    }
+                }
+            };
         }
 
         public void initGame() {
@@ -169,11 +208,11 @@ public class Tetris extends AppCompatActivity {
         @Override
         protected void onDraw(Canvas canvas) {
             ShapeDrawable rect = new ShapeDrawable(new RectShape());
-            rect.setBounds(0, 0, 210, 410);
+            rect.setBounds(0, 0, 1300, 1580);
             rect.getPaint().setColor(0xFF000000);
             rect.draw(canvas);
             canvas.translate(5, 5);
-            rect.setBounds(0, 0, 200, 400);
+            rect.setBounds(0, 0, 1200, 1530);
             rect.getPaint().setColor(0xFFFFFFFF);
             rect.draw(canvas);
 
@@ -192,36 +231,40 @@ public class Tetris extends AppCompatActivity {
             return rotated;
         }
 
-        @Override
-        public boolean onKeyDown(int keyCode, KeyEvent event) {
-            switch (keyCode) {
-                case KeyEvent.KEYCODE_DPAD_CENTER:
-                    int[][] newBlock = rotate(block);
-                    if (check(newBlock, posx, posy)) {
-                        block = newBlock;
-                    }
-                    break;
-                case KeyEvent.KEYCODE_DPAD_RIGHT:
-                    if (check(block, posx + 1, posy)) {
-                        posx = posx + 1;
-                    }
-                    break;
-                case KeyEvent.KEYCODE_DPAD_LEFT:
-                    if (check(block, posx - 1, posy)) {
-                        posx = posx - 1;
-                    }
-                    break;
-                case KeyEvent.KEYCODE_DPAD_UP:
-                case KeyEvent.KEYCODE_DPAD_DOWN:
-                    int y = posy;
-                    while (check(block, posx, y)) { y++; }
-                    if (y > 0) posy = y - 1;
 
-                    break;
-            }
-            mHandler.sendEmptyMessage(INVALIDATE);
-            return true;
-        }
+        /*
+        *   PCでの操作の時にKeyEvent処理が必要
+        * */
+//        @Override
+//        public boolean onKeyDown(int keyCode, KeyEvent event) {
+//            switch (keyCode) {
+//                case KeyEvent.KEYCODE_DPAD_CENTER:
+//                    int[][] newBlock = rotate(block);
+//                    if (check(newBlock, posx, posy)) {
+//                        block = newBlock;
+//                    }
+//                    break;
+//                case KeyEvent.KEYCODE_DPAD_RIGHT:
+//                    if (check(block, posx + 1, posy)) {
+//                        posx = posx + 1;
+//                    }
+//                    break;
+//                case KeyEvent.KEYCODE_DPAD_LEFT:
+//                    if (check(block, posx - 1, posy)) {
+//                        posx = posx - 1;
+//                    }
+//                    break;
+//                case KeyEvent.KEYCODE_DPAD_UP:
+//                case KeyEvent.KEYCODE_DPAD_DOWN:
+//                    int y = posy;
+//                    while (check(block, posx, y)) { y++; }
+//                    if (y > 0) posy = y - 1;
+//
+//                    break;
+//            }
+//            mHandler.sendEmptyMessage(INVALIDATE);
+//            return true;
+//        }
 
         public void startAnime() {
             mHandler.sendEmptyMessage(INVALIDATE);
