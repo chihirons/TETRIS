@@ -1,6 +1,7 @@
 package com.example.user.tetris;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.RectShape;
@@ -17,7 +18,12 @@ import android.view.View;
 import java.util.Random;
 
 public class Tetris extends AppCompatActivity {
+
+    Intent intent;
+
     private class FieldView extends SurfaceView {
+
+
 
         Random mRand = new Random(System.currentTimeMillis());
 
@@ -76,8 +82,8 @@ public class Tetris extends AppCompatActivity {
             // activity画面のタッチ操作を取得
             View frick = getWindow().getDecorView();
 
+            //フリック操作を行ったときにFlickから帰ってくる操作で識別
             new Flick(frick){
-
                 @Override
                 public void getFlick(int swipe) {
                     switch (swipe){
@@ -121,6 +127,7 @@ public class Tetris extends AppCompatActivity {
             }
         }
 
+        //テトリスのブロックの点画の大きさとブロックの隙間の調整
         private void paintMatrix(Canvas canvas, int[][] matrix, int offsetx, int offsety, int color) {
             ShapeDrawable rect = new ShapeDrawable(new RectShape());
             rect.getPaint().setColor(color);
@@ -161,6 +168,12 @@ public class Tetris extends AppCompatActivity {
                 for (int x = 0; x < block[0].length; x ++) {
                     if (block[y][x] != 0) {
                         map[offsety + y][offsetx + x] = block[y][x];
+                    }
+
+                    //マップの頂点が画面の X=0,Y=0にしか到達できない仕組み
+                    // なので頂点に辿り着くとGAMEOVER
+                    if (map[0][0] != 0){
+                        startActivity(intent);
                     }
                 }
             }
@@ -232,40 +245,6 @@ public class Tetris extends AppCompatActivity {
         }
 
 
-        /*
-        *   PCでの操作の時にKeyEvent処理が必要
-        * */
-//        @Override
-//        public boolean onKeyDown(int keyCode, KeyEvent event) {
-//            switch (keyCode) {
-//                case KeyEvent.KEYCODE_DPAD_CENTER:
-//                    int[][] newBlock = rotate(block);
-//                    if (check(newBlock, posx, posy)) {
-//                        block = newBlock;
-//                    }
-//                    break;
-//                case KeyEvent.KEYCODE_DPAD_RIGHT:
-//                    if (check(block, posx + 1, posy)) {
-//                        posx = posx + 1;
-//                    }
-//                    break;
-//                case KeyEvent.KEYCODE_DPAD_LEFT:
-//                    if (check(block, posx - 1, posy)) {
-//                        posx = posx - 1;
-//                    }
-//                    break;
-//                case KeyEvent.KEYCODE_DPAD_UP:
-//                case KeyEvent.KEYCODE_DPAD_DOWN:
-//                    int y = posy;
-//                    while (check(block, posx, y)) { y++; }
-//                    if (y > 0) posy = y - 1;
-//
-//                    break;
-//            }
-//            mHandler.sendEmptyMessage(INVALIDATE);
-//            return true;
-//        }
-
         public void startAnime() {
             mHandler.sendEmptyMessage(INVALIDATE);
             mHandler.sendEmptyMessage(DROPBLOCK);
@@ -322,6 +301,8 @@ public class Tetris extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
+
+        intent = new Intent(this,GameOverScreen.class);
     }
 
     @Override
