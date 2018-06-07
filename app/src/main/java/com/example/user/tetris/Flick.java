@@ -4,6 +4,8 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
+import java.util.LinkedList;
+
 public abstract class Flick {
 
     public static final int LEFT_FLICK= 0;
